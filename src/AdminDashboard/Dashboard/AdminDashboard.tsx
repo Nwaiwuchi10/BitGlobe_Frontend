@@ -29,7 +29,7 @@ const AdminDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
         </div>
         <nav className="p-4 space-y-2">
           <a href="#" className="block px-3 py-2 rounded-lg text-blue-900">
-            🏠 <Link to="/adminPage">Home</Link>
+            🏠 <Link to="/admin/dashboard">Home</Link>
           </a>
           <a href="#" className="block px-3 py-2 rounded-lg text-blue-900">
             📄 <Link to="/view/deposit"> Deposit Request</Link>
