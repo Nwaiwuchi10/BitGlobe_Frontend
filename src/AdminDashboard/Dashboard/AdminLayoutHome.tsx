@@ -100,7 +100,9 @@ const AdminDashboardHome: React.FC = () => {
                           {user.firstName} {user.lastName}
                         </td>
                         <td className="px-4 py-3 text-blue-900 underline">
-                          <Link to={`admin/users/page/${user._id}`}>
+                          <Link
+                            to={`admin/dashboard/admin/users/page/${user._id}`}
+                          >
                             {user.email}
                           </Link>
                         </td>
