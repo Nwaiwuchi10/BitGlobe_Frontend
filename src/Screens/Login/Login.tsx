@@ -56,6 +56,7 @@ const Login: React.FC = () => {
 
       // Save user to localStorage
       localStorage.setItem("user", JSON.stringify(res.data));
+      localStorage.setItem("isAdmin", res.data.isAdmin);
       localStorage.setItem("userId", res.data.userId);
 
       if (res.data.isAdmin === true) {

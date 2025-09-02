@@ -32,8 +32,11 @@ function App() {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
 
-    if (userId) {
+    if (isAdmin) {
+      navigate("/admin/dashboard", { replace: true });
+    } else if (userId) {
       // ✅ If logged in, go to dashboard
       navigate("/dashboard", { replace: true });
     } else {
