@@ -76,7 +76,7 @@ function App() {
           <Route path="/dashboard/withdrawal" element={<WithdrawalForm />} />
           <Route path="/view/withdrawals" element={<WithdrawalTable />} />
           <Route
-            path="adminPage/admin/users/page/:id"
+            path="/admin/dashboard/admin/users/page/:id"
             element={<Manuplate />}
           />
           <Route
