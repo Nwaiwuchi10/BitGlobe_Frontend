@@ -52,7 +52,7 @@ const AdminDashboardLayout: React.FC<UserDashboardLayoutProps> = ({
             📄 <Link to="/view/plan">View Investment Plan</Link>
           </a>
           <a href="#" className="block px-3 py-2 rounded-lg text-blue-900">
-            📄 <Link to="/adminPage">Show All Users</Link>
+            📄 <Link to="/admin/dashboard">Show All Users</Link>
           </a>
           <a href="#" className="block px-3 py-2 rounded-lg text-blue-900">
             ⚙️ Settings
