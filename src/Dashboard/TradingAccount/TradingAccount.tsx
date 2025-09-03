@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import UserDashboardLayout from "../UserDashboard/DashboardLayout";
-import { TradingAccountApi } from "../../Api/Api";
+import { GetAllDepositApi, TradingAccountApi } from "../../Api/Api";
 import { Link, useNavigate } from "react-router-dom";
 
 interface TradingAccount {
@@ -16,10 +16,14 @@ interface TransactSum {
   totalWithdrawals: number;
   totalDeposits: number;
 }
+interface DepoSum {
+  totalDeposits: number;
+}
 
 const TradingAccountScreen: React.FC = () => {
   const navigate = useNavigate();
   const [account, setAccount] = useState<TradingAccount | null>(null);
+  const [depositSum, setDeposiSum] = useState<DepoSum | null>(null);
   const [transactionSum, setTransaction] = useState<TransactSum | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -55,7 +59,20 @@ const TradingAccountScreen: React.FC = () => {
     };
     fetchAccount();
   }, []);
-
+  useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${GetAllDepositApi}/total/${userId}`);
+        setDeposiSum(res.data);
+      } catch (err: any) {
+        setError("Failed to load trading account.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAccount();
+  }, []);
   return (
     <UserDashboardLayout>
       <div className="p-6">
@@ -128,7 +145,7 @@ const TradingAccountScreen: React.FC = () => {
                 Total Deposits
               </h2>
               <p className="text-2xl font-bold text-blue-900 mt-4">
-                ${transactionSum?.totalDeposits || 0}
+                ${depositSum?.totalDeposits || 0}
               </p>
             </div>
 
@@ -138,7 +155,7 @@ const TradingAccountScreen: React.FC = () => {
                 Cumulative
               </h2>
               <p className="text-2xl font-bold text-blue-900 mt-4">
-                ${transactionSum?.totalDeposits || 0}
+                ${account?.earnedFund}
               </p>
             </div>
 

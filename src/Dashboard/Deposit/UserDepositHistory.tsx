@@ -27,10 +27,12 @@ const UserDepositTableHistory: React.FC<{}> = () => {
   const fetchDeposits = async () => {
     try {
       setLoading(true);
-      const res = await axios.get<Deposit[]>(
+      const res = await axios.get<{ totalAmount: number; deposits: Deposit[] }>(
         `${Base_url}/deposit/user/${userId}/all`
       );
-      setDeposits(res.data);
+
+      setDeposits(res.data.deposits); // ✅ fix
+      console.log("Total amount:", res.data.totalAmount); // you can display this somewhere
     } catch (error) {
       console.error("Error fetching deposits:", error);
     } finally {
@@ -57,7 +59,7 @@ const UserDepositTableHistory: React.FC<{}> = () => {
           <table className="w-full border-collapse border border-gray-200 text-sm">
             <thead className="bg-blue-900 text-white">
               <tr>
-                <th className="border px-3 py-2">Wallet</th>
+                {/* <th className="border px-3 py-2">Wallet</th> */}
                 <th className="border px-3 py-2">Amount</th>
                 <th className="border px-3 py-2">Paid</th>
                 <th className="border px-3 py-2">Status</th>
@@ -71,9 +73,9 @@ const UserDepositTableHistory: React.FC<{}> = () => {
                     key={d._id}
                     className="hover:bg-gray-50 transition duration-150"
                   >
-                    <td className="border px-3 py-2 text-blue-900">
+                    {/* <td className="border px-3 py-2 text-blue-900">
                       {d.adminWalletId?.walletName || "N/A"}
-                    </td>
+                    </td> */}
                     <td className="border px-3 py-2 font-semibold text-blue-900">
                       ${d.amount}
                     </td>

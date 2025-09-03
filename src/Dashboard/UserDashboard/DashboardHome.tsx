@@ -5,7 +5,11 @@ import TradingTicker from "../../components/TradingTicker";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { TradingAccountApi } from "../../Api/Api";
+import {
+  GetAllDepositApi,
+  TradingAccountApi,
+  UserInvestPlanApi,
+} from "../../Api/Api";
 interface TradingAccount {
   availableBalance: number;
   totalWithdrawal: number;
@@ -17,11 +21,33 @@ interface TransactSum {
   totalDeposits: number;
   totalWithdrawals: number;
 }
+interface DepoSum {
+  totalDeposits: number;
+}
+interface InvestmentPlan {
+  _id: string;
+  planName: string;
+  duration: number;
+  minAmount: number;
+  maxAmount: number;
+  interestRate?: number;
+}
+
+interface UserInvestment {
+  _id: string;
+  amount: number;
+  isPaused: boolean;
+  isEnded: boolean;
+  startDate: string;
+  endDate: string;
+  investmentplanId: InvestmentPlan;
+}
 const DashboardHome = () => {
   const navigate = useNavigate();
   const [account, setAccount] = useState<TradingAccount | null>(null);
   const [transactionSum, setTransaction] = useState<TransactSum | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [depositSum, setDeposiSum] = useState<DepoSum | null>(null);
+
   const [error, setError] = useState("");
   const userId = localStorage.getItem("userId");
   // Replace with your real endpoint
@@ -55,12 +81,55 @@ const DashboardHome = () => {
     };
     fetchAccount();
   }, []);
+  useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${GetAllDepositApi}/total/${userId}`);
+        setDeposiSum(res.data);
+      } catch (err: any) {
+        setError("Failed to load trading account.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAccount();
+  }, []);
+  const [investments, setInvestments] = useState<UserInvestment[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchInvestments = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get<UserInvestment[]>(
+        `${UserInvestPlanApi}/user-investments/${userId}`
+      );
+      setInvestments(res.data);
+    } catch (error) {
+      console.error("Error fetching investments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchInvestments();
+    }
+  }, [userId]);
   return (
     <UserDashboardLayout>
       <div className="flex flex-col md:flex-row gap-6 p-4">
         {/* Welcome & Summary Section */}
         <div className="flex-1 space-y-3">
-          <h1 className="text-3xl font-bold text-darkblue">Welcome!</h1>
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-blue-900">Welcome!</h1>
+            <p className="text-blue-900 text-lg">Trading Account</p>
+            <p className="text-blue-900">
+              A glance summary of your Trading account. Have a nice day!
+            </p>
+          </div>
+          {/* <h1 className="text-3xl font-bold text-darkblue">Welcome!</h1> */}
           <h2 className="text-xl text-gray-700">New user</h2>
           <p className="text-lg text-gray-800 leading-relaxed">
             At a glance summary of your investment. Have a nice day!
@@ -73,6 +142,42 @@ const DashboardHome = () => {
             Invest Now
           </button>
           {/* trading section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {loading ? (
+              <p className="text-gray-500">Loading investments...</p>
+            ) : investments.length > 0 ? (
+              investments.map((inv) => (
+                <div
+                  key={inv._id}
+                  className="bg-white shadow-md rounded-2xl p-6 border hover:shadow-lg transition"
+                >
+                  <h2 className="text-lg font-bold text-blue-900">
+                    {inv.investmentplanId?.planName || "Unnamed Plan"}
+                  </h2>
+                  <p className="text-gray-600">
+                    Duration:{" "}
+                    <span className="font-medium">
+                      {inv.investmentplanId?.duration} days
+                    </span>
+                  </p>
+                  <p className="text-gray-600">
+                    Amount Invested:{" "}
+                    <span className="font-semibold text-green-700">
+                      ${inv.amount}
+                    </span>
+                  </p>
+                  <p className="text-gray-600">
+                    Start Date: {new Date(inv.startDate).toLocaleDateString()}
+                  </p>
+                  <p className="text-gray-600">
+                    End Date: {new Date(inv.endDate).toLocaleDateString()}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500">No investments found.</p>
+            )}
+          </div>
         </div>
 
         {/* Trading View Chart */}
@@ -83,13 +188,6 @@ const DashboardHome = () => {
       <div>
         <div className="p-6">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-blue-900">Welcome!</h1>
-            <p className="text-blue-900 text-lg">Trading Account</p>
-            <p className="text-blue-900">
-              A glance summary of your Trading account. Have a nice day!
-            </p>
-          </div>
 
           {loading && (
             <p className="text-center text-blue-900">Loading account...</p>
@@ -151,7 +249,7 @@ const DashboardHome = () => {
                   Total Deposits
                 </h2>
                 <p className="text-2xl font-bold text-blue-900 mt-4">
-                  ${transactionSum?.totalDeposits || 0}
+                  ${depositSum?.totalDeposits || 0}
                 </p>
               </div>
 
@@ -161,7 +259,7 @@ const DashboardHome = () => {
                   Cumulative
                 </h2>
                 <p className="text-2xl font-bold text-blue-900 mt-4">
-                  ${transactionSum?.totalDeposits || 0}
+                  ${account?.earnedFund}
                 </p>
               </div>
 
