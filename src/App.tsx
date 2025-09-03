@@ -1,7 +1,7 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import Homepage from "./pages/Home/Homepage";
-import LanguageSelector from "./components/LanguageSelector";
+// import LanguageSelector from "./components/LanguageSelector";
 import Register from "./Screens/Register/Register";
 import Login from "./Screens/Login/Login";
 import DashboardHome from "./Dashboard/UserDashboard/DashboardHome";
@@ -49,7 +49,7 @@ function App() {
       <div className="bg-darkblue">
         {/* <Support /> */}
         <div style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
-          <LanguageSelector />
+          {/* <LanguageSelector /> */}
         </div>
 
         {/* <Whatsapp /> */}

@@ -69,7 +69,7 @@ const Trade = () => {
                     Min: ${plan.minAmount} – Max: ${plan.maxAmount}
                   </p>
                   <p>Duration: {plan.duration} days</p>
-                  <p>Interest: {plan.interestRate ?? 0}%</p>
+                  {/* <p>Interest: {plan.interestRate ?? 0}%</p> */}
                   <p>24/7 Support Included</p>
                 </div>
                 {/* button */}
